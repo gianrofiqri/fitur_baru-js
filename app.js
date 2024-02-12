@@ -1,25 +1,28 @@
-const animes = [{
-        title: 'naruto',
-        rating: 89,
-        year: 1998,
-    },
-    {
-        title: 'tang san',
-        rating: 90,
-        year: 2020,
-    },
-    {
-        title: 'hunter',
-        rating: 81,
-        year: 2021,
-    },
-    {
-        title: 'boruto',
-        rating: 83,
-        year: 2010,
-    },
-]
+const form = document.querySelector('#search-form');
 
-const anime = animes.map(({ title, year, rating }) => {
-    return `${title}(${year}) rating ${rating}`;
-})
+form.addEventListener('submit', async(e) => {
+    e.preventDefault();
+    // const searchQuery = form.elements.query.value;
+    // const config = { params: { q: searchQuery } };
+
+    document.querySelectorAll('img').forEach((img) => img.remove());
+
+    const keyword = form.elements.query.value;
+    const config = {
+        params: { q: keyword },
+    };
+    const res = await axios.get(`http://api.tvmaze.com/search/shows`, config);
+    showImages(res.data);
+    getImages(res.data);
+    form.elements.query.value = '';
+});
+
+const showImages = (shows) => {
+    for (let result of shows) {
+        if (result.show.image) {
+            const img = document.createElement('img');
+            img.src = result.show.image.medium;
+            document.body.append(img);
+        }
+    }
+};
